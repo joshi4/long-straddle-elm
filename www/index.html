@@ -8231,19 +8231,17 @@ var _elm_lang$html$Html_Events$Options = F2(
 	function (a, b) {
 		return {stopPropagation: a, preventDefault: b};
 	});
-var _joshi4$long_straddle_elm$Main$getInfo = function (o) {
-	var _p0 = o;
-	if (_p0.ctor === 'Call') {
-		return _p0._0;
-	} else {
-		return _p0._0;
-	}
-};
 var _joshi4$long_straddle_elm$Main$breakEven = function (model) {
-	var putInfo = _joshi4$long_straddle_elm$Main$getInfo(model.put);
-	var callInfo = _joshi4$long_straddle_elm$Main$getInfo(model.call);
-	var callBreakEven = (callInfo.strikePrice + callInfo.premium) + putInfo.premium;
-	var putBreakEven = (putInfo.strikePrice - putInfo.premium) - callInfo.premium;
+	var put = model.put;
+	var call = model.call;
+	var callBreakEven = A2(
+		call.cost,
+		call.strikePrice,
+		A2(call.cost, call.premium, put.premium));
+	var putBreakEven = A2(
+		put.cost,
+		put.strikePrice,
+		A2(call.cost, put.premium, call.premium));
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		'callBreakEven:',
@@ -8261,57 +8259,27 @@ var _joshi4$long_straddle_elm$Main$toFloat = function (str) {
 		0,
 		_elm_lang$core$String$toFloat(str));
 };
-var _joshi4$long_straddle_elm$Main$option = {strikePrice: 0, premium: 0};
-var _joshi4$long_straddle_elm$Main$OptionInfo = F2(
-	function (a, b) {
-		return {strikePrice: a, premium: b};
-	});
-var _joshi4$long_straddle_elm$Main$Model = F3(
-	function (a, b, c) {
-		return {sharePrice: a, call: b, put: c};
-	});
-var _joshi4$long_straddle_elm$Main$Put = function (a) {
-	return {ctor: 'Put', _0: a};
-};
-var _joshi4$long_straddle_elm$Main$Call = function (a) {
-	return {ctor: 'Call', _0: a};
-};
-var _joshi4$long_straddle_elm$Main$model = A3(
-	_joshi4$long_straddle_elm$Main$Model,
-	0,
-	_joshi4$long_straddle_elm$Main$Call(_joshi4$long_straddle_elm$Main$option),
-	_joshi4$long_straddle_elm$Main$Put(_joshi4$long_straddle_elm$Main$option));
-var _joshi4$long_straddle_elm$Main$setPremium = F2(
-	function (opt, premium) {
-		var _p1 = opt;
-		if (_p1.ctor === 'Call') {
-			return _joshi4$long_straddle_elm$Main$Call(
-				{premium: premium, strikePrice: _p1._0.strikePrice});
-		} else {
-			return _joshi4$long_straddle_elm$Main$Put(
-				{premium: premium, strikePrice: _p1._0.strikePrice});
-		}
-	});
 var _joshi4$long_straddle_elm$Main$setStrikePrice = F2(
 	function (opt, strike) {
-		var _p2 = opt;
-		if (_p2.ctor === 'Call') {
-			return _joshi4$long_straddle_elm$Main$Call(
-				{premium: _p2._0.premium, strikePrice: strike});
-		} else {
-			return _joshi4$long_straddle_elm$Main$Put(
-				{premium: _p2._0.premium, strikePrice: strike});
-		}
+		return _elm_lang$core$Native_Utils.update(
+			opt,
+			{strikePrice: strike});
+	});
+var _joshi4$long_straddle_elm$Main$setPremium = F2(
+	function (opt, premium) {
+		return _elm_lang$core$Native_Utils.update(
+			opt,
+			{premium: premium});
 	});
 var _joshi4$long_straddle_elm$Main$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'Share':
 				return _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						sharePrice: _joshi4$long_straddle_elm$Main$toFloat(_p3._0)
+						sharePrice: _joshi4$long_straddle_elm$Main$toFloat(_p0._0)
 					});
 			case 'CallStrike':
 				return _elm_lang$core$Native_Utils.update(
@@ -8320,7 +8288,7 @@ var _joshi4$long_straddle_elm$Main$update = F2(
 						call: A2(
 							_joshi4$long_straddle_elm$Main$setStrikePrice,
 							model.call,
-							_joshi4$long_straddle_elm$Main$toFloat(_p3._0))
+							_joshi4$long_straddle_elm$Main$toFloat(_p0._0))
 					});
 			case 'CallPremium':
 				return _elm_lang$core$Native_Utils.update(
@@ -8329,7 +8297,7 @@ var _joshi4$long_straddle_elm$Main$update = F2(
 						call: A2(
 							_joshi4$long_straddle_elm$Main$setPremium,
 							model.call,
-							_joshi4$long_straddle_elm$Main$toFloat(_p3._0))
+							_joshi4$long_straddle_elm$Main$toFloat(_p0._0))
 					});
 			case 'PutStrike':
 				return _elm_lang$core$Native_Utils.update(
@@ -8338,7 +8306,7 @@ var _joshi4$long_straddle_elm$Main$update = F2(
 						put: A2(
 							_joshi4$long_straddle_elm$Main$setStrikePrice,
 							model.put,
-							_joshi4$long_straddle_elm$Main$toFloat(_p3._0))
+							_joshi4$long_straddle_elm$Main$toFloat(_p0._0))
 					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
@@ -8347,10 +8315,34 @@ var _joshi4$long_straddle_elm$Main$update = F2(
 						put: A2(
 							_joshi4$long_straddle_elm$Main$setPremium,
 							model.put,
-							_joshi4$long_straddle_elm$Main$toFloat(_p3._0))
+							_joshi4$long_straddle_elm$Main$toFloat(_p0._0))
 					});
 		}
 	});
+var _joshi4$long_straddle_elm$Main$option = function (fn) {
+	return {strikePrice: 0, premium: 0, cost: fn};
+};
+var _joshi4$long_straddle_elm$Main$Option = F3(
+	function (a, b, c) {
+		return {strikePrice: a, premium: b, cost: c};
+	});
+var _joshi4$long_straddle_elm$Main$Model = F3(
+	function (a, b, c) {
+		return {sharePrice: a, call: b, put: c};
+	});
+var _joshi4$long_straddle_elm$Main$model = A3(
+	_joshi4$long_straddle_elm$Main$Model,
+	0,
+	_joshi4$long_straddle_elm$Main$option(
+		F2(
+			function (a, b) {
+				return a + b;
+			})),
+	_joshi4$long_straddle_elm$Main$option(
+		F2(
+			function (a, b) {
+				return a - b;
+			})));
 var _joshi4$long_straddle_elm$Main$PutPremium = function (a) {
 	return {ctor: 'PutPremium', _0: a};
 };

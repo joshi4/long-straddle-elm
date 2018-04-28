@@ -19,14 +19,10 @@ main =
 -- MODEL
 
 
-type Option
-    = Call OptionInfo
-    | Put OptionInfo
-
-
-type alias OptionInfo =
+type alias Option =
     { strikePrice : Float
     , premium : Float
+    , cost : Float -> Float -> Float
     }
 
 
@@ -39,13 +35,14 @@ type alias Model =
 
 model : Model
 model =
-    Model 0 (Call option) (Put option)
+    Model 0 (option (\a b -> a + b)) (option (\a b -> a - b))
 
 
-option : OptionInfo
-option =
+option : (Float -> Float -> Float) -> Option
+option fn =
     { strikePrice = 0
     , premium = 0
+    , cost = fn
     }
 
 
@@ -82,34 +79,12 @@ update msg model =
 
 setPremium : Option -> Float -> Option
 setPremium opt premium =
-    case opt of
-        Call info ->
-            Call
-                { premium = premium
-                , strikePrice = info.strikePrice
-                }
-
-        Put info ->
-            Put
-                { premium = premium
-                , strikePrice = info.strikePrice
-                }
+    { opt | premium = premium }
 
 
 setStrikePrice : Option -> Float -> Option
 setStrikePrice opt strike =
-    case opt of
-        Call info ->
-            Call
-                { premium = info.premium
-                , strikePrice = strike
-                }
-
-        Put info ->
-            Put
-                { premium = info.premium
-                , strikePrice = strike
-                }
+    { opt | strikePrice = strike }
 
 
 
@@ -141,26 +116,16 @@ view model =
 breakEven : Model -> String
 breakEven model =
     let
-        callInfo =
-            getInfo model.call
+        call =
+            model.call
 
-        putInfo =
-            getInfo model.put
+        put =
+            model.put
 
         callBreakEven =
-            callInfo.strikePrice + callInfo.premium + putInfo.premium
+            call.cost call.strikePrice <| call.cost call.premium put.premium
 
         putBreakEven =
-            putInfo.strikePrice - putInfo.premium - callInfo.premium
+            put.cost put.strikePrice <| call.cost put.premium call.premium
     in
         "callBreakEven:" ++ toString callBreakEven ++ "putBreakEven:" ++ toString putBreakEven
-
-
-getInfo : Option -> OptionInfo
-getInfo o =
-    case o of
-        Call info ->
-            info
-
-        Put info ->
-            info
