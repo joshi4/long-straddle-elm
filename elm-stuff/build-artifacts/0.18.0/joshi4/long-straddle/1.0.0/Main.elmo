@@ -1,0 +1,230 @@
+var _joshi4$long_straddle$Main$getInfo = function (o) {
+	var _p0 = o;
+	if (_p0.ctor === 'Call') {
+		return _p0._0;
+	} else {
+		return _p0._0;
+	}
+};
+var _joshi4$long_straddle$Main$breakEven = function (model) {
+	var putInfo = _joshi4$long_straddle$Main$getInfo(model.put);
+	var callInfo = _joshi4$long_straddle$Main$getInfo(model.call);
+	var callBreakEven = (callInfo.strikePrice + callInfo.premium) + putInfo.premium;
+	var putBreakEven = (putInfo.strikePrice - putInfo.premium) - callInfo.premium;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'callBreakEven:',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(callBreakEven),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'putBreakEven:',
+				_elm_lang$core$Basics$toString(putBreakEven))));
+};
+var _joshi4$long_straddle$Main$toFloat = function (str) {
+	return A2(
+		_elm_lang$core$Result$withDefault,
+		0,
+		_elm_lang$core$String$toFloat(str));
+};
+var _joshi4$long_straddle$Main$option = {strikePrice: 0, premium: 0};
+var _joshi4$long_straddle$Main$OptionInfo = F2(
+	function (a, b) {
+		return {strikePrice: a, premium: b};
+	});
+var _joshi4$long_straddle$Main$Model = F3(
+	function (a, b, c) {
+		return {sharePrice: a, call: b, put: c};
+	});
+var _joshi4$long_straddle$Main$Put = function (a) {
+	return {ctor: 'Put', _0: a};
+};
+var _joshi4$long_straddle$Main$Call = function (a) {
+	return {ctor: 'Call', _0: a};
+};
+var _joshi4$long_straddle$Main$model = A3(
+	_joshi4$long_straddle$Main$Model,
+	0,
+	_joshi4$long_straddle$Main$Call(_joshi4$long_straddle$Main$option),
+	_joshi4$long_straddle$Main$Put(_joshi4$long_straddle$Main$option));
+var _joshi4$long_straddle$Main$setPremium = F2(
+	function (opt, premium) {
+		var _p1 = opt;
+		if (_p1.ctor === 'Call') {
+			return _joshi4$long_straddle$Main$Call(
+				{premium: premium, strikePrice: _p1._0.strikePrice});
+		} else {
+			return _joshi4$long_straddle$Main$Put(
+				{premium: premium, strikePrice: _p1._0.strikePrice});
+		}
+	});
+var _joshi4$long_straddle$Main$setStrikePrice = F2(
+	function (opt, strike) {
+		var _p2 = opt;
+		if (_p2.ctor === 'Call') {
+			return _joshi4$long_straddle$Main$Call(
+				{premium: _p2._0.premium, strikePrice: strike});
+		} else {
+			return _joshi4$long_straddle$Main$Put(
+				{premium: _p2._0.premium, strikePrice: strike});
+		}
+	});
+var _joshi4$long_straddle$Main$update = F2(
+	function (msg, model) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'Share':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						sharePrice: _joshi4$long_straddle$Main$toFloat(_p3._0)
+					});
+			case 'CallStrike':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						call: A2(
+							_joshi4$long_straddle$Main$setStrikePrice,
+							model.call,
+							_joshi4$long_straddle$Main$toFloat(_p3._0))
+					});
+			case 'CallPremium':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						call: A2(
+							_joshi4$long_straddle$Main$setPremium,
+							model.call,
+							_joshi4$long_straddle$Main$toFloat(_p3._0))
+					});
+			case 'PutStrike':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						put: A2(
+							_joshi4$long_straddle$Main$setStrikePrice,
+							model.put,
+							_joshi4$long_straddle$Main$toFloat(_p3._0))
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						put: A2(
+							_joshi4$long_straddle$Main$setPremium,
+							model.put,
+							_joshi4$long_straddle$Main$toFloat(_p3._0))
+					});
+		}
+	});
+var _joshi4$long_straddle$Main$PutPremium = function (a) {
+	return {ctor: 'PutPremium', _0: a};
+};
+var _joshi4$long_straddle$Main$CallPremium = function (a) {
+	return {ctor: 'CallPremium', _0: a};
+};
+var _joshi4$long_straddle$Main$PutStrike = function (a) {
+	return {ctor: 'PutStrike', _0: a};
+};
+var _joshi4$long_straddle$Main$CallStrike = function (a) {
+	return {ctor: 'CallStrike', _0: a};
+};
+var _joshi4$long_straddle$Main$Share = function (a) {
+	return {ctor: 'Share', _0: a};
+};
+var _joshi4$long_straddle$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$placeholder('Share Price'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_joshi4$long_straddle$Main$Share),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder('Call Price'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(_joshi4$long_straddle$Main$CallStrike),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$placeholder('Put Price'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_joshi4$long_straddle$Main$PutStrike),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$placeholder('Call Premium'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(_joshi4$long_straddle$Main$CallPremium),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('Put Premium'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(_joshi4$long_straddle$Main$PutPremium),
+										_1: {ctor: '[]'}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											_joshi4$long_straddle$Main$breakEven(model)),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _joshi4$long_straddle$Main$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _joshi4$long_straddle$Main$model, view: _joshi4$long_straddle$Main$view, update: _joshi4$long_straddle$Main$update})();
