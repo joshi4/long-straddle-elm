@@ -18,6 +18,7 @@ main =
 
 -- MODEL
 
+
 type Option
     = Call OptionInfo
     | Put OptionInfo
@@ -114,6 +115,8 @@ setStrikePrice opt strike =
 
 -- toFloat converts user input to a floating point number
 -- toFloat returns 0 if user entered non-float
+
+
 toFloat : String -> Float
 toFloat str =
     Result.withDefault 0 (String.toFloat str)
@@ -121,6 +124,8 @@ toFloat str =
 
 
 -- VIEW
+
+
 view : Model -> Html Msg
 view model =
     div []
