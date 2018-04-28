@@ -22,7 +22,6 @@ main =
 type alias Option =
     { strikePrice : Float
     , premium : Float
-    , cost : Float -> Float -> Float
     }
 
 
@@ -35,15 +34,12 @@ type alias Model =
 
 model : Model
 model =
-    Model 0 (option (\a b -> a + b)) (option (\a b -> a - b))
+    Model 0 option option
 
 
-option : (Float -> Float -> Float) -> Option
-option fn =
-    { strikePrice = 0
-    , premium = 0
-    , cost = fn
-    }
+option : Option
+option =
+    Option 0 0
 
 
 
@@ -113,6 +109,14 @@ view model =
         ]
 
 
+type CallOption
+    = Call Option
+
+
+type PutOption
+    = Put Option
+
+
 breakEven : Model -> String
 breakEven model =
     let
@@ -122,10 +126,30 @@ breakEven model =
         put =
             model.put
 
-        callBreakEven =
-            call.cost call.strikePrice <| call.cost call.premium put.premium
+        cBreakEven =
+            callBreakEven (Call call) (Put put)
 
-        putBreakEven =
-            put.cost put.strikePrice <| call.cost put.premium call.premium
+        pBreakEven =
+            putBreakEven (Call call) (Put put)
     in
-        "callBreakEven:" ++ toString callBreakEven ++ "putBreakEven:" ++ toString putBreakEven
+        "callBreakEven:" ++ toString cBreakEven ++ "putBreakEven:" ++ toString pBreakEven
+
+
+
+-- callBreakEven ensures it is a compiler error if
+-- arguments are provided in the wrong order
+
+
+callBreakEven : CallOption -> PutOption -> Float
+callBreakEven (Call call) (Put put) =
+    call.strikePrice + call.premium + put.premium
+
+
+
+-- callBreakEven ensures it is a compiler error if
+-- arguments are provided in the wrong order
+
+
+putBreakEven : CallOption -> PutOption -> Float
+putBreakEven (Call call) (Put put) =
+    put.strikePrice - (call.premium + put.premium)
