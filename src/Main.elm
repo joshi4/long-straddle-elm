@@ -1,14 +1,16 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, input, text)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Css exposing (focus, backgroundColor)
+import Css.Colors exposing (yellow)
+import Html.Styled exposing (Html, div, input, text, styled)
+import Html.Styled.Attributes exposing (..)
+import Html.Styled.Events exposing (onInput, onClick)
 import String exposing (toFloat)
 
 
 main : Program Never Model Msg
 main =
-    Html.beginnerProgram
+    Html.Styled.beginnerProgram
         { model = model
         , view = view
         , update = update
@@ -97,18 +99,6 @@ toFloat str =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    div []
-        [ input [ placeholder "Share Price", onInput Share ] []
-        , input [ placeholder "Call Price", onInput CallStrike ] []
-        , input [ placeholder "Put Price", onInput PutStrike ] []
-        , input [ placeholder "Call Premium", onInput CallPremium ] []
-        , input [ placeholder "Put Premium", onInput PutPremium ] []
-        , div [] [ text <| breakEven model ]
-        ]
-
-
 type CallOption
     = Call Option
 
@@ -153,3 +143,25 @@ callBreakEven (Call call) (Put put) =
 putBreakEven : CallOption -> PutOption -> Float
 putBreakEven (Call call) (Put put) =
     put.strikePrice - (call.premium + put.premium)
+
+
+styledInput : String -> (String -> Msg) -> Html Msg
+styledInput defaultText msg =
+    styled input
+        [ focus [ backgroundColor yellow ] ]
+        [ placeholder defaultText
+        , onInput msg
+        ]
+        []
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ styledInput "Share Price" Share
+        , styledInput "Call Price" CallStrike
+        , styledInput "Put Price" PutStrike
+        , styledInput "Call Premium" CallPremium
+        , styledInput "Put Premium" PutPremium
+        , div [] [ text <| breakEven model ]
+        ]
